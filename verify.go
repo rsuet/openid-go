@@ -8,18 +8,18 @@ import (
 	"strings"
 )
 
-func Verify(uri string, cache DiscoveryCache, nonceStore NonceStore) (id string, err error) {
+func Verify(uri string, cache DiscoveryCache, nonceStore NonceStore) (values url.Values, err error) {
 	return defaultInstance.Verify(uri, cache, nonceStore)
 }
 
-func (oid *OpenID) Verify(uri string, cache DiscoveryCache, nonceStore NonceStore) (id string, err error) {
+func (oid *OpenID) Verify(uri string, cache DiscoveryCache, nonceStore NonceStore) (values url.Values, err error) {
 	parsedURL, err := url.Parse(uri)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	values, err := url.ParseQuery(parsedURL.RawQuery)
+	values, err = url.ParseQuery(parsedURL.RawQuery)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// 11.  Verifying Assertions
@@ -29,36 +29,36 @@ func (oid *OpenID) Verify(uri string, cache DiscoveryCache, nonceStore NonceStor
 	// - The value of "openid.signed" contains all the required fields.
 	//   (Section 10.1)
 	if err = verifySignedFields(values); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// - The signature on the assertion is valid (Section 11.4)
 	if err = verifySignature(uri, values, oid.urlGetter); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// - The value of "openid.return_to" matches the URL of the current
 	//   request (Section 11.1)
 	if err = verifyReturnTo(parsedURL, values); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// - Discovered information matches the information in the assertion
 	//   (Section 11.2)
 	if err = oid.verifyDiscovered(parsedURL, values, cache); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// - An assertion has not yet been accepted from this OP with the
 	//   same value for "openid.response_nonce" (Section 11.3)
 	if err = verifyNonce(values, nonceStore); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// If all four of these conditions are met, assertion is now
 	// verified. If the assertion contained a Claimed Identifier, the
 	// user is now authenticated with that identifier.
-	return values.Get("openid.claimed_id"), nil
+	return values, nil
 }
 
 // 10.1. Positive Assertions
