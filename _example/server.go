@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/yohcop/openid-go"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/rsuet/openid-go"
 )
 
 const dataDir = "_example/"
