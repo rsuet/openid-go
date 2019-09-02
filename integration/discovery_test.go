@@ -5,8 +5,9 @@ package integration
 // whatever, they will fail. It's ok though, they are full tests.
 
 import (
-	. "github.com/yohcop/openid-go"
 	"testing"
+
+	. "github.com/rsuet/openid-go"
 )
 
 func TestYahoo(t *testing.T) {

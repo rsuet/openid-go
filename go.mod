@@ -1,4 +1,4 @@
-module github.com/yohcop/openid-go
+module github.com/rsuet/openid-go
 
 go 1.3
 
