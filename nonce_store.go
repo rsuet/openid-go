@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var maxNonceAge = flag.Duration("openid-max-nonce-age",
+var MaxNonceAge = flag.Duration("openid-max-nonce-age",
 	60*time.Second,
 	"Maximum accepted age for openid nonces. The bigger, the more"+
 		"memory is needed to store used nonces.")
@@ -54,7 +54,7 @@ func (d *SimpleNonceStore) Accept(endpoint, nonce string) error {
 	}
 	now := time.Now()
 	diff := now.Sub(ts)
-	if diff > *maxNonceAge {
+	if diff > *MaxNonceAge {
 		return fmt.Errorf("Nonce too old: %.2fs", diff.Seconds())
 	}
 
@@ -75,7 +75,7 @@ func (d *SimpleNonceStore) Accept(endpoint, nonce string) error {
 				// we have been building so far...
 				return errors.New("Nonce already used")
 			}
-			if now.Sub(n.T) < *maxNonceAge {
+			if now.Sub(n.T) < *MaxNonceAge {
 				newNonces = append(newNonces, n)
 			}
 		}
